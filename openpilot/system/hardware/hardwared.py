@@ -62,7 +62,7 @@ class Chestnut:
       return
     self.attempts += 1
     cloudlog.warning(f"chestnut firmware mismatch, flashing (attempt {self.attempts})")
-    self.proc = subprocess.Popen(["sudo", sys.executable, os.path.join(BASEDIR, "system/hardware/chestnut/flash.py")])
+    self.proc = subprocess.Popen(["sudo", sys.executable, os.path.join(BASEDIR, "openpilot/system/hardware/chestnut/flash.py")])
 
 
 ThermalBand = namedtuple("ThermalBand", ['min_temp', 'max_temp'])
