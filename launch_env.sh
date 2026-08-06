@@ -6,6 +6,9 @@ export NUMEXPR_NUM_THREADS=1
 export OPENBLAS_NUM_THREADS=1
 export VECLIB_MAXIMUM_THREADS=1
 
+# This branch targets the Volvo V60 platform exclusively.
+export FINGERPRINT=VOLVO_V60
+
 # models get lower priority than ui
 # - ui is ~5ms
 # - modeld is 20ms
