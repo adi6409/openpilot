@@ -56,6 +56,8 @@ class Chestnut:
     mismatch = any((d["vendorId"], d["productId"]) in CHESTNUT_USB_IDS and d["product"] != f"custom {CHESTNUT_FW_VERSION}-CLEAN" for d in usb_state)
     if not mismatch:
       self.flashed = False
+    # flash succeeded but the old firmware is still running, needs a chestnut power cycle
+    set_offroad_alert_if_changed("Offroad_ChestnutPowerCycle", self.flashed and mismatch)
     if not offroad or not mismatch or self.flashed or self.attempts >= self.MAX_ATTEMPTS:
       return
     self.attempts += 1
