@@ -1,9 +1,39 @@
+import ctypes
+import fcntl
 import os
 from pathlib import Path
 
 CHESTNUT_FW_VERSION = "bef953a4"
 CHESTNUT_USB_IDS = ((0xADD1, 0x0001), (0x3801, 0x0001))
 USB_DEVICES_PATH = Path("/sys/bus/usb/devices")
+USBDEVFS_CONTROL = 0xC0185500
+PCIE_LTSSM_REG = 0xB450  # 0x78 = L0, link to the GPU is up
+
+
+class _Ctrl(ctypes.Structure):
+  _fields_ = [("request_type", ctypes.c_uint8), ("request", ctypes.c_uint8),
+              ("value", ctypes.c_uint16), ("index", ctypes.c_uint16),
+              ("length", ctypes.c_uint16), ("timeout", ctypes.c_uint32),
+              ("data", ctypes.c_void_p)]
+
+
+def chestnut_status(busnum: int, devnum: int) -> tuple[int, bool]:
+  # EP0 reads of supply voltage and PCIe LTSSM state, only answered by the custom firmware
+  try:
+    fd = os.open(f"/dev/bus/usb/{busnum:03d}/{devnum:03d}", os.O_RDWR)
+  except OSError:
+    return 0, False
+  try:
+    # hw_status_t: voltage u16, current s16, plus firmware-version-dependent extras
+    status = (ctypes.c_ubyte * 16)()
+    fcntl.ioctl(fd, USBDEVFS_CONTROL, _Ctrl(0xC0, 0xC0, 0, 0, 16, 100, ctypes.cast(status, ctypes.c_void_p)))
+    ltssm = (ctypes.c_ubyte * 1)()
+    fcntl.ioctl(fd, USBDEVFS_CONTROL, _Ctrl(0xC0, 0xE4, PCIE_LTSSM_REG, 0, 1, 100, ctypes.cast(ltssm, ctypes.c_void_p)))
+    return int.from_bytes(bytes(status[:2]), "little"), ltssm[0] == 0x78
+  except OSError:
+    return 0, False
+  finally:
+    os.close(fd)
 
 
 def get_usb_topology() -> set[str]:

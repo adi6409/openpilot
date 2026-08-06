@@ -420,6 +420,8 @@ struct DeviceState @0xa4d8b5af2aa492eb {
 
   # usb
   chestnutPresent @51 :Bool;
+  chestnutPcieUp @53 :Bool;
+  chestnutVoltage @54 :UInt16;  # mV
   usbState @52 :UsbState;
 
   networkType @22 :NetworkType;

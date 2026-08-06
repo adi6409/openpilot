@@ -19,7 +19,7 @@ from openpilot.common.realtime import DT_HW
 from openpilot.selfdrive.selfdrived.alertmanager import set_offroad_alert
 from openpilot.common.hardware import HARDWARE, TICI, PC
 from openpilot.common.basedir import BASEDIR
-from openpilot.common.hardware.usb import CHESTNUT_FW_VERSION, CHESTNUT_USB_IDS, get_usb_state, get_usb_topology, set_usb_state
+from openpilot.common.hardware.usb import CHESTNUT_FW_VERSION, CHESTNUT_USB_IDS, chestnut_status, get_usb_state, get_usb_topology, set_usb_state
 from openpilot.common.linux import LinuxSystemStats
 from openpilot.system.loggerd.config import get_available_percent
 from openpilot.common.swaglog import cloudlog
@@ -227,6 +227,7 @@ def hardware_thread(end_event, hw_queue) -> None:
 
   fan_controller = FanController(int(1./DT_HW))
   chestnut = Chestnut()
+  chestnut_stat = (0, False)
 
   while not end_event.is_set():
     sm.update(PANDA_STATES_TIMEOUT)
@@ -287,6 +288,11 @@ def hardware_thread(end_event, hw_queue) -> None:
     msg.deviceState.screenBrightnessPercent = HARDWARE.get_screen_brightness()
 
     set_usb_state(msg.deviceState, last_hw_state.usb_state)
+    # EP0 poll offroad only, modeld owns the chestnut onroad
+    if started_ts is None and (count % int(10. / DT_HW)) == 0:
+      chestnut_stat = next((chestnut_status(d["busnum"], d["devnum"]) for d in last_hw_state.usb_state
+                            if (d["vendorId"], d["productId"]) in CHESTNUT_USB_IDS), (0, False))
+    msg.deviceState.chestnutVoltage, msg.deviceState.chestnutPcieUp = chestnut_stat
     chestnut.update(started_ts is None, last_hw_state.usb_state)
 
     # this subset is only used for offroad
