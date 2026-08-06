@@ -49,5 +49,15 @@ readback verification of the flashed image.
   power cycles (test rig only; the flasher itself used only data USB)
 - forced verify passes on the whole fleet; final fleet state `custom bef953a4-CLEAN` at 5 Gb/s
 
+## Car power classes (simulated with the rack's Tapo GPU outlets)
+
+- The ASM stays enumerated on comma VBUS when external GPU power is off: ignition-switched 12V ports do not hide
+  the chestnut offroad, flashing works in both car classes.
+- On standard chestnuts the VBUS cycle resets the ASM regardless of external power, so activation is fully
+  automatic in both classes.
+- The two back-powered test boards (`d05bb90f`, `de2e7866`) ride through VBUS cycles; for that hardware the
+  flasher reports deferred activation and hardwared raises the `Offroad_ChestnutPowerCycle` alert until the
+  product string matches after a real power cycle.
+
 Campaign logs: rack PC `~/chestnut_campaign_*/`, `~/external*.log`, mirrored to
 `chestnut-rack-validation-20260805/` in this repo.
