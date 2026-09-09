@@ -19,7 +19,7 @@ export FINGERPRINT=VOLVO_V60
 export QCOM_PRIORITY=12
 
 if [ -z "$AGNOS_VERSION" ]; then
-  export AGNOS_VERSION="19.4"
+  export AGNOS_VERSION="19.7"
 fi
 
 export STAGING_ROOT="/data/safe_staging"
