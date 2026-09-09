@@ -167,7 +167,12 @@ class Controls:
     hudControl.speedVisible = CC.enabled
     hudControl.lanesVisible = CC.enabled
     hudControl.leadVisible = self.sm['longitudinalPlan'].hasLead
-    hudControl.leadDistanceBars = self.sm['selfdriveState'].personality.raw + 1
+    hudControl.leadDistanceBars = {
+      log.LongitudinalPersonality.aggressive: 1,
+      log.LongitudinalPersonality.standard: 2,
+      log.LongitudinalPersonality.relaxed: 3,
+      log.LongitudinalPersonality.kapara: 1,
+    }[self.sm['selfdriveState'].personality]
     hudControl.visualAlert = self.sm['selfdriveState'].alertHudVisual
 
     hudControl.rightLaneVisible = True

@@ -55,6 +55,7 @@ FCW_IDXS = T_IDXS < 5.0
 T_DIFFS = np.diff(T_IDXS, prepend=[0.])
 COMFORT_BRAKE = 2.5
 STOP_DISTANCE = 6.0
+KAPARA_STOP_DISTANCE = 1.0
 MIN_X_LEAD_FACTOR = 0.5
 
 def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
@@ -63,6 +64,8 @@ def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
   elif personality==log.LongitudinalPersonality.standard:
     return 1.0
   elif personality==log.LongitudinalPersonality.aggressive:
+    return 0.5
+  elif personality==log.LongitudinalPersonality.kapara:
     return 0.5
   else:
     raise NotImplementedError("Longitudinal personality not supported")
@@ -75,14 +78,29 @@ def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
     return 1.45
   elif personality==log.LongitudinalPersonality.aggressive:
     return 1.25
+  elif personality==log.LongitudinalPersonality.kapara:
+    return 1.0
   else:
     raise NotImplementedError("Longitudinal personality not supported")
+
+def get_stop_distance(personality=log.LongitudinalPersonality.standard):
+  if personality == log.LongitudinalPersonality.kapara:
+    return KAPARA_STOP_DISTANCE
+  return STOP_DISTANCE
+
+def get_obstacle_offset(personality=log.LongitudinalPersonality.standard):
+  return STOP_DISTANCE - get_stop_distance(personality)
+
+def get_lead_danger_factor(personality=log.LongitudinalPersonality.standard):
+  if personality == log.LongitudinalPersonality.kapara:
+    return (LEAD_DANGER_FACTOR * get_stop_distance(personality) + get_obstacle_offset(personality)) / STOP_DISTANCE
+  return LEAD_DANGER_FACTOR
 
 def get_stopped_equivalence_factor(v_lead):
   return (v_lead**2) / (2 * COMFORT_BRAKE)
 
-def get_safe_obstacle_distance(v_ego, t_follow):
-  return (v_ego**2) / (2 * COMFORT_BRAKE) + t_follow * v_ego + STOP_DISTANCE
+def get_safe_obstacle_distance(v_ego, t_follow, stop_distance=STOP_DISTANCE):
+  return (v_ego**2) / (2 * COMFORT_BRAKE) + t_follow * v_ego + stop_distance
 
 def gen_long_model():
   model = AcadosModel()
@@ -319,7 +337,11 @@ class LongitudinalMpc:
     lead_0_obstacle = lead_xv_0[:,0] + get_stopped_equivalence_factor(lead_xv_0[:,1])
     lead_1_obstacle = lead_xv_1[:,0] + get_stopped_equivalence_factor(lead_xv_1[:,1])
 
-    x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle])
+    # STOP_DISTANCE is compiled into the generated solver. Shift the obstacles to
+    # support a personality-specific standstill distance without changing the
+    # physical lead estimates used for FCW below.
+    obstacle_offset = get_obstacle_offset(personality)
+    x_obstacles = np.column_stack([lead_0_obstacle, lead_1_obstacle]) + obstacle_offset
     self.source = MPC_SOURCES[np.argmin(x_obstacles[0])]
 
     self.yref[:,:] = 0.0
@@ -332,7 +354,7 @@ class LongitudinalMpc:
     self.params[:,2] = np.min(x_obstacles, axis=1)
     self.params[:,3] = np.copy(self.a_prev)
     self.params[:,4] = t_follow
-    self.params[:,5] = LEAD_DANGER_FACTOR
+    self.params[:,5] = get_lead_danger_factor(personality)
 
     self.run()
     if (np.any(lead_xv_0[FCW_IDXS,0] - self.x_sol[FCW_IDXS,0] < CRASH_DISTANCE) and

@@ -355,6 +355,10 @@ msgstr "업데이트 설치"
 msgid "Joystick Debug Mode"
 msgstr "조이스틱 디버그 모드"
 
+#: openpilot/selfdrive/ui/layouts/settings/toggles.py
+msgid "Kapara"
+msgstr "Kapara"
+
 #: openpilot/selfdrive/ui/widgets/ssh_key.py
 msgid "LOADING"
 msgstr "로딩 중"
@@ -812,4 +816,3 @@ msgstr[0] "{}분 전"
 #: openpilot/selfdrive/ui/widgets/prime.py
 msgid "✓ SUBSCRIBED"
 msgstr "✓ 구독됨"
-

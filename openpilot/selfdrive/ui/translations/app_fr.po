@@ -355,6 +355,10 @@ msgstr "Installer la mise à jour"
 msgid "Joystick Debug Mode"
 msgstr "Mode débogage joystick"
 
+#: openpilot/selfdrive/ui/layouts/settings/toggles.py
+msgid "Kapara"
+msgstr "Kapara"
+
 #: openpilot/selfdrive/ui/widgets/ssh_key.py
 msgid "LOADING"
 msgstr "CHARGEMENT"
@@ -816,4 +820,3 @@ msgstr[1] "il y a {} minutes"
 #: openpilot/selfdrive/ui/widgets/prime.py
 msgid "✓ SUBSCRIBED"
 msgstr "✓ ABONNÉ"
-

@@ -355,6 +355,10 @@ msgstr "Встановити оновлення"
 msgid "Joystick Debug Mode"
 msgstr "Режим зневадження джойстика"
 
+#: openpilot/selfdrive/ui/layouts/settings/toggles.py
+msgid "Kapara"
+msgstr "Kapara"
+
 #: openpilot/selfdrive/ui/widgets/ssh_key.py
 msgid "LOADING"
 msgstr "ЗАВАНТАЖЕННЯ"
@@ -820,4 +824,3 @@ msgstr[2] "{} хвилин тому"
 #: openpilot/selfdrive/ui/widgets/prime.py
 msgid "✓ SUBSCRIBED"
 msgstr "✓ ПІДПИСАНО"
-

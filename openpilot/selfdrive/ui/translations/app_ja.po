@@ -355,6 +355,10 @@ msgstr "アップデートをインストール"
 msgid "Joystick Debug Mode"
 msgstr "ジョイスティックデバッグモード"
 
+#: openpilot/selfdrive/ui/layouts/settings/toggles.py
+msgid "Kapara"
+msgstr "Kapara"
+
 #: openpilot/selfdrive/ui/widgets/ssh_key.py
 msgid "LOADING"
 msgstr "読み込み中"
@@ -812,4 +816,3 @@ msgstr[0] "{}分前"
 #: openpilot/selfdrive/ui/widgets/prime.py
 msgid "✓ SUBSCRIBED"
 msgstr "✓ 登録済み"
-
