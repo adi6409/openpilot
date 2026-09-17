@@ -172,7 +172,7 @@ class Controls:
       log.LongitudinalPersonality.standard: 2,
       log.LongitudinalPersonality.relaxed: 3,
       log.LongitudinalPersonality.kapara: 1,
-    }[self.sm['selfdriveState'].personality]
+    }[self.sm['selfdriveState'].personality.raw]
     hudControl.visualAlert = self.sm['selfdriveState'].alertHudVisual
 
     hudControl.rightLaneVisible = True
