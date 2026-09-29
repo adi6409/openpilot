@@ -113,6 +113,7 @@ class TestParams(OpenpilotTestCase):
     assert len(keys) > 20
     assert len(keys) == len(set(keys))
     assert b"CarParams" in keys
+    assert b"VolvoRadarSimulationTrigger" in keys
 
   def test_params_default_value(self):
     self.params.remove("LanguageSetting")

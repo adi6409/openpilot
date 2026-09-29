@@ -134,6 +134,9 @@ inline static std::unordered_map<std::string, ParamKeyAttributes> keys = {
     {"UpdaterLastFetchTime", {PERSISTENT, TIME}},
     {"UptimeOffroad", {PERSISTENT, FLOAT, "0.0"}},
     {"UptimeOnroad", {PERSISTENT, FLOAT, "0.0"}},
+    // One-shot, development-only trigger for the Volvo ESR simulation
+    // vehicle experiment. The controller consumes and clears it immediately.
+    {"VolvoRadarSimulationTrigger", {CLEAR_ON_MANAGER_START | CLEAR_ON_OFFROAD_TRANSITION | DEVELOPMENT_ONLY, BOOL}},
     {"ChestnutActive", {CLEAR_ON_MANAGER_START | CLEAR_ON_OFFROAD_TRANSITION | CLEAR_ON_IGNITION_ON, BOOL}},
     {"ChestnutLoading", {CLEAR_ON_MANAGER_START | CLEAR_ON_OFFROAD_TRANSITION | CLEAR_ON_IGNITION_ON, BOOL}},
     {"Version", {PERSISTENT, STRING}},
